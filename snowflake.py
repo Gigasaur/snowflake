@@ -13,20 +13,20 @@ class Particle:
         self.y = (self.y + self.free * random.randint(-1, 1))
 
     def draw(self, screen):
-        screen.set_at((self.x, self.y), (255,255,255))
+        screen.set_at((self.x, self.y), (0, 0, 0))
 
 class Board:
-    def __init__(self, n, m, N):
+    def __init__(self, n, m, N, screen):
         self.n = n
         self.m = m
-        self.screen = pygame.display.set_mode((n, m))
+        self.screen = screen
         self.particles = [Particle(n, m) for i in range(N)]
+        self.particles[0].free = 0
 
     def draw(self):
-        self.screen.fill((0,0,0))
+        self.screen.fill((255, 255, 255))
         for p in self.particles:
             p.draw(self.screen)
-        pygame.display.flip()
 
     def step(self):
         for p in self.particles:
@@ -46,18 +46,21 @@ class Board:
         for p1 in self.particles:
             for p2 in self.particles:
                 if p1 is not p2:
-                    if math.sqrt((p1.x-p2.x)**2 + (p1.y-p2.y)**2) == 1:
+                    if math.sqrt((p1.x-p2.x)**2 + (p1.y-p2.y)**2) == 1 \
+                       and (not p1.free or not p2.free):
                         p1.free = 0
                         p2.free = 0
 
 def main():
     
     pygame.init()
+    screen = pygame.display.set_mode((100,100)) 
 
-    b = Board(10, 10, 20)
+    b = Board(100, 100, 1000, screen)
     b.print_state()
     while 1:
         b.iterate()
+        pygame.display.flip()
     print("")
     b.print_state()
 
