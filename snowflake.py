@@ -13,7 +13,8 @@ class Particle:
         self.y = (self.y + self.free * random.randint(-1, 1))
 
     def draw(self, screen):
-        screen.set_at((self.x, self.y), (0, 0, 0))
+        rect = pygame.Rect(int(4*self.x), int(4*self.y), 4, 4)
+        pygame.draw.rect(screen, (0, 0, 0), rect)
 
 class Board:
     def __init__(self, n, m, N, screen):
@@ -46,17 +47,18 @@ class Board:
         for p1 in self.particles:
             for p2 in self.particles:
                 if p1 is not p2:
-                    if math.sqrt((p1.x-p2.x)**2 + (p1.y-p2.y)**2) == 1 \
+                    if ((p1.x-p2.x)%(self.n))**2 + ((p1.y-p2.y)%(self.m))**2 == 1 \
                        and (not p1.free or not p2.free):
                         p1.free = 0
                         p2.free = 0
+                    
 
 def main():
     
     pygame.init()
-    screen = pygame.display.set_mode((100,100)) 
+    screen = pygame.display.set_mode((600, 200)) 
 
-    b = Board(100, 100, 1000, screen)
+    b = Board(150, 50, 2000, screen)
     b.print_state()
     while 1:
         b.iterate()
